@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Luck SMP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:    #050507;
+  --deep:     #0d0c14;
+  --void:     #12101c;
+  --gold:     #c9a84c;
+  --gold-dim: #7d6227;
+  --red:      #c0392b;
+  --red-soft: #8b2121;
+  --clover:   #2d7a4f;
+  --coin:     #d4a017;
+  --text:     #d8d4cc;
+  --muted:    #6b6475;
+  --border:   #251f35;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  background: var(--black);
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+#stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 48px;
+  background: linear-gradient(to bottom, rgba(5,5,7,.97) 0%, transparent 100%);
+}
+.nav-logo { font-family: 'Cinzel', serif; font-weight: 900; font-size: 1rem; letter-spacing: .14em; color: var(--gold); text-decoration: none; }
+.nav-links { display: flex; gap: 28px; list-style: none; }
+.nav-links a { font-size: .73rem; letter-spacing: .08em; color: var(--muted); text-decoration: none; transition: color .2s; font-weight: 400; }
+.nav-links a:hover { color: var(--text); }
+
+/* HERO */
+.hero {
+  position: relative; min-height: 100svh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 120px 24px 80px; z-index: 1;
+}
+.hero-clover { font-size: clamp(4rem,10vw,7rem); line-height: 1; margin-bottom: 28px; display: inline-block; animation: float 6s ease-in-out infinite; filter: drop-shadow(0 0 32px rgba(45,122,79,.6)); }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+.hero-eyebrow { font-size: .68rem; font-weight: 500; letter-spacing: .25em; color: var(--gold-dim); margin-bottom: 18px; text-transform: uppercase; }
+h1 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(3.5rem,9vw,8rem); line-height: .95; color: #fff; letter-spacing: -.01em; margin-bottom: 8px; }
+h1 .luck { color: var(--gold); }
+h1 .smp  { color: var(--muted); font-weight: 400; font-size: .55em; display: block; letter-spacing: .3em; margin-top: 8px; }
+.hero-sub { margin-top: 24px; font-size: 1rem; color: var(--muted); max-width: 440px; line-height: 1.75; font-weight: 300; }
+.hero-cta { margin-top: 40px; display: inline-flex; align-items: center; gap: 10px; padding: 13px 32px; background: var(--gold); color: var(--black); font-family: 'Cinzel', serif; font-weight: 700; font-size: .82rem; letter-spacing: .1em; text-decoration: none; border-radius: 2px; transition: background .2s, transform .15s; }
+.hero-cta:hover { background: #e6c06a; transform: translateY(-2px); }
+.version-badge { display: inline-block; margin-top: 18px; padding: 4px 14px; border: 1px solid var(--border); border-radius: 20px; font-size: .68rem; color: var(--muted); letter-spacing: .1em; }
+.scroll-hint { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--muted); font-size: .62rem; letter-spacing: .15em; text-transform: uppercase; opacity: .4; animation: pulse 2.5s ease-in-out infinite; }
+.scroll-hint svg { width: 18px; }
+@keyframes pulse { 0%,100%{opacity:.2} 50%{opacity:.6} }
+
+/* LAYOUT */
+section { position: relative; z-index: 1; }
+.container { max-width: 1000px; margin: 0 auto; padding: 0 32px; }
+.section-label { font-size: .63rem; letter-spacing: .22em; color: var(--gold-dim); text-transform: uppercase; margin-bottom: 14px; font-weight: 500; }
+h2 { font-family: 'Cinzel', serif; font-size: clamp(1.8rem,3.5vw,2.6rem); font-weight: 700; color: #fff; line-height: 1.1; margin-bottom: 18px; }
+.divider { width: 100%; height: 1px; background: linear-gradient(to right, transparent, var(--border) 30%, var(--border) 70%, transparent); }
+
+/* LUCK BOOKS */
+.books-section { padding: 100px 0; }
+.books-intro { max-width: 540px; }
+.books-intro p { font-size: .9rem; color: var(--muted); line-height: 1.75; margin-top: 8px; }
+.books-grid { margin-top: 56px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); border: 1px solid var(--border); }
+.book-card {
+  background: var(--deep); padding: 0; cursor: pointer;
+  transition: background .2s; overflow: hidden;
+}
+.book-card:hover { background: var(--void); }
+.book-header { padding: 32px 28px 24px; display: flex; flex-direction: column; gap: 10px; }
+.book-icon { font-size: 2.2rem; line-height: 1; }
+.book-name { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; color: #fff; letter-spacing: .03em; }
+.book-tag { font-size: .65rem; letter-spacing: .12em; font-weight: 500; padding: 2px 8px; border-radius: 2px; display: inline-block; width: fit-content; }
+.book-body { padding: 0 28px 28px; border-top: 1px solid var(--border); margin: 0 0 0 0; }
+.book-block { margin-top: 20px; }
+.block-title { font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 10px; font-weight: 500; }
+.book-body li { font-size: .78rem; color: var(--muted); line-height: 1.65; list-style: none; padding-left: 12px; position: relative; margin-bottom: 6px; }
+.book-body li::before { content: '—'; position: absolute; left: 0; color: var(--border); }
+.passive-tag { color: var(--clover); font-weight: 500; }
+.dmg { color: #e8a0a0; font-weight: 500; }
+
+/* Couleurs par book */
+.book-dark   .book-tag { background: rgba(50,30,90,.5); color: #b89bef; border: 1px solid #4a306a; }
+.book-thunder .book-tag { background: rgba(70,60,10,.5); color: #f0dc60; border: 1px solid #7a6a10; }
+.book-adren  .book-tag { background: rgba(20,60,30,.5); color: #7be09a; border: 1px solid #207a40; }
+.book-raw    .book-tag { background: rgba(80,20,20,.5); color: #f08080; border: 1px solid #8a2020; }
+.book-hell   .book-tag { background: rgba(80,30,10,.5); color: #f09040; border: 1px solid #8a4010; }
+.book-wind   .book-tag { background: rgba(10,50,70,.5); color: #70d0f0; border: 1px solid #10608a; }
+
+/* HEARTS */
+.hearts-section { padding: 100px 0; background: linear-gradient(to bottom, var(--black) 0%, #0e0510 50%, var(--black) 100%); }
+.hearts-visual { display: flex; align-items: center; gap: 80px; margin-top: 56px; }
+.hearts-display { flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; }
+.heart-row { display: flex; gap: 6px; }
+.heart { font-size: 1.7rem; line-height: 1; display: inline-block; }
+.heart.full  { filter: drop-shadow(0 0 6px rgba(192,57,43,.8)); }
+.heart.empty { opacity: .15; filter: grayscale(1); }
+.heart.stolen { animation: stolen-beat 1.5s ease-in-out infinite; filter: drop-shadow(0 0 10px rgba(192,57,43,1)); }
+@keyframes stolen-beat { 0%,100%{transform:scale(1)} 30%{transform:scale(1.3)} 60%{transform:scale(.9)} }
+.hearts-text { flex: 1; }
+.hearts-text p { font-size: .9rem; color: var(--muted); line-height: 1.8; max-width: 420px; }
+.hearts-text p + p { margin-top: 12px; }
+.warning-box { margin-top: 24px; padding: 14px 18px; border-left: 3px solid var(--red); background: rgba(139,33,33,.08); border-radius: 0 4px 4px 0; }
+.warning-box p { font-size: .8rem; color: #e8a0a0; line-height: 1.65; }
+
+/* ÉCONOMIE */
+.economy-section { padding: 100px 0; }
+.eco-grid { margin-top: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--border); border: 1px solid var(--border); margin-bottom: 60px; }
+.eco-card { background: var(--deep); padding: 36px 32px; }
+.eco-icon { font-size: 2rem; margin-bottom: 16px; display: block; }
+.eco-card h3 { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 10px; letter-spacing: .04em; }
+.eco-card p { font-size: .83rem; color: var(--muted); line-height: 1.7; }
+.cmd { display: inline-block; margin-top: 8px; font-family: monospace; font-size: .78rem; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 3px; padding: 2px 8px; color: var(--gold); }
+
+/* TABLE MOBS */
+.mobs-section { padding: 0 0 100px; }
+.mobs-header { margin-bottom: 28px; }
+.mob-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 24px; }
+.filter-btn { font-size: .7rem; letter-spacing: .1em; padding: 6px 16px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; border-radius: 2px; transition: all .15s; font-family: 'Inter', sans-serif; }
+.filter-btn:hover, .filter-btn.active { background: var(--gold); color: var(--black); border-color: var(--gold); }
+.mob-table-wrap { overflow-x: auto; border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; }
+thead th { font-family: 'Cinzel', serif; font-size: .7rem; letter-spacing: .1em; color: var(--gold-dim); font-weight: 700; padding: 14px 20px; text-align: left; background: var(--deep); border-bottom: 1px solid var(--border); }
+tbody tr { border-bottom: 1px solid rgba(37,31,53,.5); transition: background .1s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--void); }
+tbody td { padding: 11px 20px; font-size: .8rem; color: var(--muted); }
+td.mob-name { color: var(--text); font-weight: 400; }
+td.mob-emoji { font-size: 1.1rem; width: 40px; padding-right: 0; }
+.mob-cat { display: inline-block; font-size: .6rem; letter-spacing: .1em; padding: 1px 7px; border-radius: 2px; }
+.cat-passif { background: rgba(45,122,79,.15); color: #7be09a; border: 1px solid rgba(45,122,79,.3); }
+.cat-hostile { background: rgba(192,57,43,.15); color: #f08080; border: 1px solid rgba(192,57,43,.3); }
+.cat-boss { background: rgba(201,168,76,.15); color: var(--gold); border: 1px solid rgba(201,168,76,.3); }
+td.gain { color: var(--coin); font-weight: 500; font-family: monospace; font-size: .82rem; }
+tr[data-cat="passif"] { }
+tr[data-cat="hostile"] { }
+tr[data-cat="boss"] { }
+tr.hidden { display: none; }
+
+/* CRAFT GRID */
+.craft-block { margin-top: 32px; }
+.craft-block h4 { font-family: 'Cinzel', serif; font-size: .8rem; font-weight: 700; color: #fff; letter-spacing: .08em; margin-bottom: 16px; }
+.craft-grid {
+  display: grid; grid-template-columns: repeat(3, 52px); gap: 4px;
+}
+.craft-cell {
+  width: 52px; height: 52px;
+  background: #1a1525; border: 2px solid #2e2540;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; position: relative;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,.5);
+  transition: transform .15s;
+}
+.craft-cell:hover { transform: scale(1.08); }
+.craft-cell[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%);
+  background: #1a1525; border: 1px solid var(--border);
+  color: var(--text); font-size: .65rem; white-space: nowrap;
+  padding: 3px 8px; border-radius: 3px; pointer-events: none;
+  opacity: 0; transition: opacity .15s;
+}
+.craft-cell:hover::after { opacity: 1; }
+.craft-arrow { font-size: 1.4rem; color: var(--gold-dim); align-self: center; margin: 0 8px; }
+.craft-result { display: flex; align-items: center; gap: 12px; margin-top: 0; }
+.craft-result-cell {
+  width: 60px; height: 60px;
+  background: #1a1525; border: 2px solid var(--gold-dim);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  box-shadow: 0 0 12px rgba(201,168,76,.2), inset 0 2px 4px rgba(0,0,0,.5);
+}
+.craft-result-label { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.craft-result-label strong { display: block; color: var(--text); font-family: 'Cinzel', serif; font-size: .8rem; font-weight: 700; margin-bottom: 2px; }
+.craft-row-wrap { display: flex; align-items: center; gap: 0; }
+
+/* VERSION */
+.version-section { padding: 72px 0; text-align: center; border-top: 1px solid var(--border); }
+.version-pill { display: inline-flex; align-items: center; gap: 10px; padding: 10px 24px; border: 1px solid var(--gold-dim); border-radius: 40px; font-family: 'Cinzel', serif; font-size: .82rem; color: var(--gold); letter-spacing: .08em; margin-bottom: 14px; }
+.version-section p { font-size: .75rem; color: var(--muted); letter-spacing: .06em; }
+
+/* FOOTER */
+footer { position: relative; z-index: 1; padding: 36px 48px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.footer-logo { font-family: 'Cinzel', serif; font-weight: 900; font-size: .9rem; color: var(--gold); letter-spacing: .12em; }
+footer small { font-size: .7rem; color: var(--muted); letter-spacing: .06em; }
+
+@media (max-width: 760px) {
+  nav { padding: 14px 20px; }
+  .nav-links { display: none; }
+  .books-grid { grid-template-columns: 1fr; }
+  .hearts-visual { flex-direction: column; gap: 36px; }
+  .eco-grid { grid-template-columns: 1fr; }
+  footer { flex-direction: column; gap: 14px; text-align: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-clover, .scroll-hint, .heart.stolen { animation: none; }
+}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">LUCK SMP</a>
+  <ul class="nav-links">
+    <li><a href="#books">Luck Books</a></li>
+    <li><a href="#hearts">Cœurs</a></li>
+    <li><a href="#economy">Économie</a></li>
+    <li><a href="#mobs">Mobs</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-clover">🍀</div>
+  <p class="hero-eyebrow">Minecraft Survival Multiplayer</p>
+  <h1><span class="luck">LUCK</span><span class="smp">SMP</span></h1>
+  <p class="hero-sub">Un seul serveur, un seul monde. La chance décide de tout. Chaque mort a un prix. Chaque victoire se mérite.</p>
+  <a class="hero-cta" href="#books">Découvrir les mécaniques</a>
+  <div class="version-badge">Minecraft Java 1.21.11+</div>
+  <div class="scroll-hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    Défiler
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- LUCK BOOKS -->
+<section class="books-section" id="books">
+  <div class="container">
+    <div class="books-intro">
+      <p class="section-label">Luck Books</p>
+      <h2>Ton pouvoir, tiré au sort</h2>
+      <p>Dès ton spawn, tu reçois un Luck Book — un livre qui t'accorde un pouvoir unique. Lequel ? La chance décide. Six possibilités, six façons différentes de jouer et de dominer.</p>
+    </div>
+
+    <div class="books-grid">
+
+      <!-- DARK SENSE -->
+      <div class="book-card book-dark">
+        <div class="book-header">
+          <span class="book-icon">🦇</span>
+          <span class="book-name">Dark Sense</span>
+          <span class="book-tag">Contrôle · Support</span>
+        </div>
+        <div class="book-body">
+          <div class="book-block">
+            <div class="block-title">Capacités</div>
+            <ul>
+              <li>Clic droit sur un Catalyseur de Sculk → tire une <span class="dmg">Onde Sonique (♥ 3.5)</span></li>
+              <li>Temps de recharge de l'onde : <strong>25 secondes</strong></li>
+            </ul>
+          </div>
+          <div class="book-block">
+            <div class="block-title">Passif</div>
+            <ul>
+              <li><span class="passive-tag">★ Immunité aux Effets Négatifs</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- THUNDERCHARGE -->
+      <div class="book-card book-thunder">
+        <div class="book-header">
+          <span class="book-icon">⚡</span>
+          <span class="book-name">Thundercharge</span>
+          <span class="book-tag">Offensive · Chance</span>
+        </div>
+        <div class="book-body">
+          <div class="book-block">
+            <div class="block-title">Capacités</div>
+            <ul>
+              <li>Chaque coup a <strong>25%</strong> de chances d'invoquer un <span class="dmg">éclair (♥ 1.5)</span> sur l'ennemi</li>
+              <li>Coup d'éclair → Vitesse 3 pendant 1 min 30, hauteur de pas +1, Régénération 1/2/3 <em>(aléatoire)</em></li>
+              <li>Temps de recharge après éclair : <strong>1 min 35</strong></li>
+            </ul>
+          </div>
+          <div class="book-block">
+            <div class="block-title">Passif</div>
+            <ul>
+              <li><span class="passive-tag">★ Vitesse 1 permanente</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADRENALINE RUSH -->
+      <div class="book-card book-adren">
+        <div class="book-header">
+          <span class="book-icon">💨</span>
+          <span class="book-name">Adrenaline Rush</span>
+          <span class="book-tag">Mobilité · Chance</span>
+        </div>
+        <div class="book-body">
+          <div class="book-block">
+            <div class="block-title">Capacités</div>
+            <ul>
+              <li>Coup sur l'ennemi → <strong>25%</strong> de chances : Célérité 3 + Régénération 1 pendant <strong>35 s</strong></li>
+              <li>Frapper à nouveau pendant l'effet → <strong>35%</strong> de chances d'augmenter le niveau de Célérité</li>
+              <li>Temps de recharge après la fin de l'effet : <strong>1 min 30</strong></li>
+            </ul>
+          </div>
+          <div class="book-block">
+            <div class="block-title">Passif</div>
+            <ul>
+              <li><span class="passive-tag">★ Célérité 1 permanente</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- RAW STRENGTH -->
+      <div class="book-card book-raw">
+        <div class="book-header">
+          <span class="book-icon">💪</span>
+          <span class="book-name">Raw Strength</span>
+          <span class="book-tag">Dégâts · Combo</span>
+        </div>
+        <div class="book-body">
+          <div class="book-block">
+            <div class="block-title">Capacités</div>
+            <ul>
+              <li>Démarrer un combo de 2 coups → <strong>35%</strong> de chances d'infliger <span class="dmg">×1.5 dégâts</span></li>
+              <li>Subir des dégâts <strong>réinitialise</strong> le combo</li>
+            </ul>
+          </div>
+          <div class="book-block">
+            <div class="block-title">Passif</div>
+            <ul>
+              <li><span class="passive-tag">★ Force 1 permanente</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- HELLSCORCH -->
+      <div class="book-card book-hell">
+        <div class="book-header">
+          <span class="book-icon">🔥</span>
+          <span class="book-name">Hellscorch</span>
+          <span class="book-tag">Feu · Pression</span>
+        </div>
+        <div class="book-body">
+          <div class="book-block">
+            <div class="block-title">Capacités</div>
+            <ul>
+              <li>Si tu es en feu → <strong>20%</strong> de chances d'infliger <span class="dmg">×1.3 dégâts</span> <em>(cd 10 s)</em></li>
+              <li>Coup sur l'ennemi → <strong>15%</strong> de chances d'infliger un <span class="dmg">Feu Renforcé (♥ 6)</span></li>
+              <li>Temps de recharge Feu Renforcé : <strong>1 min</strong></li>
+            </ul>
+          </div>
+          <div class="book-block">
+            <div class="block-title">Passif</div>
+            <ul>
+              <li><span class="passive-tag">★ Résistance au Feu permanente</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- WIND MANIPULATION -->
+      <div class="book-card book-wind">
+        <div class="book-header">
+          <span class="book-icon">🌪️</span>
+          <span class="book-name">Wind Manipulation</span>
+          <span class="book-tag">Contrôle · Hache</span>
+        </div>
+        <div class="book-body">
+          <div class="book-block">
+            <div class="block-title">Capacités</div>
+            <ul>
+              <li>Frapper avec une hache en tombant de plus de <strong>5 blocs</strong> → <strong>50%</strong> de chances de compter comme un <em>Coup de Masse</em> <em>(cd 35 s)</em></li>
+              <li>Frapper avec une <em>charge de vent</em> → <strong>45%</strong> de chances d'attirer la cible <span class="dmg">(♥ 2)</span></li>
+              <li>Ennemi attiré → figé <strong>2 secondes</strong> <em>(cd 35 s)</em></li>
+            </ul>
+          </div>
+          <div class="book-block">
+            <div class="block-title">Passif</div>
+            <ul>
+              <li><span class="passive-tag" style="color:var(--muted);">— Aucun passif permanent</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- HEARTS -->
+<section class="hearts-section" id="hearts">
+  <div class="container">
+    <div class="hearts-visual">
+      <div class="hearts-display">
+        <div class="heart-row">
+          <span class="heart full">❤️</span><span class="heart full">❤️</span><span class="heart full">❤️</span><span class="heart full">❤️</span><span class="heart full">❤️</span>
+        </div>
+        <div class="heart-row">
+          <span class="heart full">❤️</span><span class="heart full">❤️</span><span class="heart stolen">❤️</span><span class="heart empty">🖤</span><span class="heart empty">🖤</span>
+        </div>
+        <p style="margin-top:12px;font-size:.66rem;color:var(--muted);letter-spacing:.1em;text-align:center;">7 / 10 — après 2 morts</p>
+      </div>
+      <div class="hearts-text">
+        <p class="section-label">Système de cœurs</p>
+        <h2>Chaque mort coûte une vie</h2>
+        <p>Tu nais avec un nombre maximum de cœurs. Tu n'en perds que dans deux cas précis :</p>
+        <ul style="margin-top:12px;list-style:none;display:flex;flex-direction:column;gap:10px;">
+          <li style="font-size:.85rem;color:var(--muted);line-height:1.7;padding-left:16px;border-left:2px solid var(--red-soft);">
+            <strong style="color:var(--text);">Un joueur te tue</strong> — il te vole un cœur, il en gagne un. Mort par mobs, chute ou feu : aucun cœur perdu.
+          </li>
+          <li style="font-size:.85rem;color:var(--muted);line-height:1.7;padding-left:16px;border-left:2px solid var(--gold-dim);">
+            <strong style="color:var(--text);">/withdrawheart</strong> — tu retires toi-même un cœur de ta réserve, il apparaît en main comme item. Tu peux alors le donner, l'utiliser ou le trader.
+          </li>
+        </ul>
+        <p style="margin-top:16px;">Les cœurs perdus ou retirés ne reviennent pas d'eux-mêmes. Ta santé maximale baisse à chaque perte.</p>
+        <div class="warning-box">
+          <p>⚠️ Tomber à zéro cœur maximum = élimination définitive du serveur. Chaque combat est une décision de vie ou de mort.</p>
+        </div>
+
+        <div class="craft-block">
+          <h4>Craft — Regagner un cœur</h4>
+          <div class="craft-row-wrap">
+            <div class="craft-grid">
+              <div class="craft-cell" data-tip="Bloc d'Or">🟡</div>
+              <div class="craft-cell" data-tip="Bloc d'Or">🟡</div>
+              <div class="craft-cell" data-tip="Bloc d'Or">🟡</div>
+              <div class="craft-cell" data-tip="Obsidienne">⬛</div>
+              <div class="craft-cell" data-tip="Étoile du Nether">⭐</div>
+              <div class="craft-cell" data-tip="Obsidienne">⬛</div>
+              <div class="craft-cell" data-tip="Bloc de Diamant">💎</div>
+              <div class="craft-cell" data-tip="Bloc de Diamant">💎</div>
+              <div class="craft-cell" data-tip="Bloc de Diamant">💎</div>
+            </div>
+            <span class="craft-arrow">→</span>
+            <div>
+              <div class="craft-result-cell">❤️</div>
+            </div>
+          </div>
+          <p style="margin-top:12px;font-size:.75rem;color:var(--muted);line-height:1.6;">Survole les cases pour voir les ingrédients. Regagner un cœur coûte cher — c'est voulu.</p>
+
+          <div style="margin-top:20px;padding:16px 18px;border-left:3px solid var(--clover);background:rgba(45,122,79,.07);border-radius:0 4px 4px 0;">
+            <p style="font-size:.78rem;color:#7be09a;line-height:1.7;">
+              💚 <strong style="font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.04em;">Revive</strong><br>
+              Si un joueur est éliminé, tu peux lui donner un cœur crafté pour le ramener à la vie. Un seul cœur suffit — mais ça te coûte le tien.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ÉCONOMIE -->
+<section class="economy-section" id="economy">
+  <div class="container">
+    <p class="section-label">Économie</p>
+    <h2>L'argent fait aussi le jeu</h2>
+
+    <div class="eco-grid">
+      <div class="eco-card">
+        <span class="eco-icon">🗡️</span>
+        <h3>Tuer des mobs</h3>
+        <p>Chaque mob tué te rapporte une quantité d'argent aléatoire dans une fourchette définie. Les créatures rares et les boss donnent beaucoup plus.</p>
+      </div>
+      <div class="eco-card">
+        <span class="eco-icon">🎯</span>
+        <h3>Primes &mdash; /bounty</h3>
+        <p>N'importe qui peut poser une prime sur un joueur. Si tu le tues, tu récupères la totalité de la mise. Plus la prime est haute, plus la chasse vaut le risque.</p>
+        <span class="cmd">/bounty &lt;joueur&gt; &lt;montant&gt;</span>
+      </div>
+      <div class="eco-card">
+        <span class="eco-icon">🏪</span>
+        <h3>Hôtel des Ventes &mdash; /ah</h3>
+        <p>Vends n'importe quel item que tu tiens en main au prix que tu fixes. Achète ce que d'autres ont mis en vente. Consulte ta propre boutique.</p>
+        <span class="cmd">/ah sell &lt;prix&gt;</span>
+        <span class="cmd">/ah</span>
+        <span class="cmd">/ah mine</span>
+      </div>
+      <div class="eco-card">
+        <span class="eco-icon">💸</span>
+        <h3>Dépenser intelligemment</h3>
+        <p>L'argent sert à équiper, à chasser, à contrôler le marché. Poser une prime sur un ennemi peut faire faire le travail à quelqu'un d'autre pour toi.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TABLE MOBS -->
+<section class="mobs-section" id="mobs">
+  <div class="container">
+    <div class="mobs-header">
+      <p class="section-label">Gains par kill</p>
+      <h2>Tous les mobs &amp; leurs récompenses</h2>
+      <div class="mob-filters">
+        <button class="filter-btn active" data-filter="all">Tous</button>
+        <button class="filter-btn" data-filter="passif">Passifs</button>
+        <button class="filter-btn" data-filter="hostile">Hostiles</button>
+        <button class="filter-btn" data-filter="boss">Boss / Rares</button>
+      </div>
+    </div>
+    <div class="mob-table-wrap">
+      <table id="mobTable">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Mob</th>
+            <th>Catégorie</th>
+            <th>Min</th>
+            <th>Max</th>
+          </tr>
+        </thead>
+        <tbody id="mobBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- VERSION -->
+<section class="version-section">
+  <div class="container">
+    <div class="version-pill"><span>✅</span> Minecraft Java Edition</div>
+    <p>Compatible 1.21.11 et versions supérieures</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">LUCK SMP</span>
+  <small>Serveur Minecraft Privé — Toutes les règles s'appliquent dès le premier spawn.</small>
+</footer>
+
+<script>
+/* ── ÉTOILES ── */
+(function () {
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  function init() {
+    stars = [];
+    const n = Math.floor((canvas.width * canvas.height) / 3000);
+    for (let i = 0; i < n; i++) stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*1.1+.15, a: Math.random(), speed: Math.random()*.003+.001, phase: Math.random()*Math.PI*2 });
+  }
+  let t = 0;
+  function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height); t++;
+    for (const s of stars) { const alpha = s.a*(.5+.5*Math.sin(t*s.speed+s.phase)); ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fillStyle=`rgba(210,200,240,${alpha})`; ctx.fill(); }
+    requestAnimationFrame(draw);
+  }
+  resize(); init(); draw();
+  window.addEventListener('resize',()=>{ resize(); init(); });
+})();
+
+/* ── MOB TABLE ── */
+const MOBS = [
+  // PASSIFS
+  {e:'🐷', n:'Cochon',             cat:'passif',  min:1,     max:5},
+  {e:'🐄', n:'Vache',              cat:'passif',  min:1,     max:5},
+  {e:'🐑', n:'Mouton',             cat:'passif',  min:1,     max:5},
+  {e:'🐔', n:'Poulet',             cat:'passif',  min:1,     max:5},
+  {e:'🐰', n:'Lapin',              cat:'passif',  min:1,     max:5},
+  {e:'🐴', n:'Cheval',             cat:'passif',  min:5,     max:10},
+  {e:'🫏', n:'Âne',                cat:'passif',  min:10,    max:15},
+  {e:'🐎', n:'Mule',               cat:'passif',  min:10,    max:15},
+  {e:'🍄', n:'Champimeuh',         cat:'passif',  min:50,    max:70},
+  {e:'🐱', n:'Ocelot',             cat:'passif',  min:1,     max:5},
+  {e:'🐺', n:'Loup',               cat:'passif',  min:5,     max:10},
+  {e:'🦑', n:'Calmar',             cat:'passif',  min:1,     max:5},
+  {e:'🐻', n:'Ours polaire',       cat:'passif',  min:15,    max:20},
+  {e:'🦙', n:'Lama',               cat:'passif',  min:1,     max:5},
+  {e:'🦜', n:'Perroquet',          cat:'passif',  min:1,     max:5},
+  {e:'🐢', n:'Tortue',             cat:'passif',  min:5,     max:15},
+  {e:'🐬', n:'Dauphin',            cat:'passif',  min:50,    max:70},
+  {e:'🐟', n:'Morue',              cat:'passif',  min:1,     max:5},
+  {e:'🐟', n:'Saumon',             cat:'passif',  min:1,     max:5},
+  {e:'🐠', n:'Poisson tropical',   cat:'passif',  min:5,     max:15},
+  {e:'🐡', n:'Poisson-globe',      cat:'passif',  min:5,     max:15},
+  {e:'🐱', n:'Chat',               cat:'passif',  min:20,    max:35},
+  {e:'🦊', n:'Renard',             cat:'passif',  min:1,     max:5},
+  {e:'🧑', n:'Marchand ambulant',  cat:'passif',  min:1,     max:2},
+  {e:'🐝', n:'Abeille',            cat:'passif',  min:20,    max:35},
+  {e:'🦎', n:'Axolotl',            cat:'passif',  min:20,    max:35},
+  {e:'✨', n:'Calmar lumineux',    cat:'passif',  min:5,     max:15},
+  {e:'🐐', n:'Chèvre',             cat:'passif',  min:20,    max:35},
+  {e:'🐸', n:'Grenouille',         cat:'passif',  min:5,     max:15},
+  {e:'🐸', n:'Têtard',             cat:'passif',  min:1,     max:2},
+  {e:'🫧', n:'Allay',              cat:'passif',  min:20,    max:35},
+  {e:'🌿', n:'Sniffer',            cat:'passif',  min:80,    max:100},
+  {e:'🦔', n:'Tatou',              cat:'passif',  min:20,    max:35},
+  {e:'🧑‍🌾', n:'Villageois',      cat:'passif',  min:20,    max:35},
+  {e:'🤖', n:'Golem de fer',       cat:'passif',  min:5,     max:15},
+  {e:'⛄', n:'Golem de neige',     cat:'passif',  min:1,     max:5},
+  {e:'💀', n:'Cheval squelette',   cat:'passif',  min:5,     max:15},
+  {e:'🧟', n:'Cheval zombie',      cat:'passif',  min:5,     max:15},
+  // HOSTILES
+  {e:'🧟', n:'Zombie',             cat:'hostile', min:1,     max:5},
+  {e:'💀', n:'Squelette',          cat:'hostile', min:1,     max:5},
+  {e:'💚', n:'Creeper',            cat:'hostile', min:1,     max:5},
+  {e:'🕷️', n:'Araignée',           cat:'hostile', min:1,     max:5},
+  {e:'🕷️', n:'Araignée des cavernes', cat:'hostile', min:5, max:15},
+  {e:'🖤', n:'Enderman',           cat:'hostile', min:20,    max:35},
+  {e:'🧙', n:'Sorcière',           cat:'hostile', min:50,    max:70},
+  {e:'🟢', n:'Slime',              cat:'hostile', min:100,   max:150},
+  {e:'🔴', n:'Cube de magma',      cat:'hostile', min:70,    max:100},
+  {e:'🐛', n:'Poisson d\'argent',  cat:'hostile', min:200,   max:250},
+  {e:'🔥', n:'Blaze',              cat:'hostile', min:100,   max:150},
+  {e:'👻', n:'Ghast',              cat:'hostile', min:50,    max:70},
+  {e:'🧟', n:'Zombie villageois',  cat:'hostile', min:100,   max:150},
+  {e:'💀', n:'Squelette du Nether',cat:'hostile', min:150,   max:200},
+  {e:'🐟', n:'Gardien',            cat:'hostile', min:200,   max:225},
+  {e:'🪲', n:'Endermite',          cat:'hostile', min:20,    max:35},
+  {e:'📦', n:'Shulker',            cat:'hostile', min:50,    max:75},
+  {e:'🧙', n:'Invocateur',         cat:'hostile', min:50,    max:75},
+  {e:'⚔️', n:'Vindicateur',        cat:'hostile', min:25,    max:35},
+  {e:'👾', n:'Vex',                cat:'hostile', min:50,    max:75},
+  {e:'👻', n:'Fantôme',            cat:'hostile', min:20,    max:35},
+  {e:'💧', n:'Noyé',               cat:'hostile', min:1,     max:5},
+  {e:'🧟', n:'Momie (Husk)',       cat:'hostile', min:1,     max:5},
+  {e:'💀', n:'Vagabond (Stray)',   cat:'hostile', min:1,     max:5},
+  {e:'🏹', n:'Pillard',            cat:'hostile', min:25,    max:35},
+  {e:'🐂', n:'Ravageur',           cat:'hostile', min:250,   max:275},
+  {e:'🐷', n:'Zombie Piglin',      cat:'hostile', min:1,     max:5},
+  {e:'🐷', n:'Piglin',             cat:'hostile', min:1,     max:5},
+  {e:'🐷', n:'Piglin brutal',      cat:'hostile', min:50,    max:75},
+  {e:'🐗', n:'Hoglin',             cat:'hostile', min:20,    max:35},
+  {e:'🐗', n:'Zoglin',             cat:'hostile', min:40,    max:70},
+  {e:'🦎', n:'Arpenteur (Strider)',cat:'hostile', min:1,     max:5},
+  {e:'💀', n:'Bogged',             cat:'hostile', min:1,     max:5},
+  {e:'🌀', n:'Rafale (Breeze)',    cat:'hostile', min:5,     max:15},
+  // BOSS
+  {e:'🐟', n:'Grand Gardien',      cat:'boss',    min:500,   max:525},
+  {e:'⚠️', n:'Gardien des profondeurs (Warden)', cat:'boss', min:15000, max:25000},
+  {e:'🐉', n:'Dragon de l\'End',   cat:'boss',    min:500,   max:1000},
+  {e:'💀', n:'Wither',             cat:'boss',    min:5000,  max:7500},
+];
+
+const tbody = document.getElementById('mobBody');
+function renderRows(filter) {
+  tbody.innerHTML = '';
+  MOBS.forEach(m => {
+    if (filter !== 'all' && m.cat !== filter) return;
+    const catLabel = m.cat === 'passif' ? '<span class="mob-cat cat-passif">Passif</span>'
+                   : m.cat === 'hostile' ? '<span class="mob-cat cat-hostile">Hostile</span>'
+                   : '<span class="mob-cat cat-boss">Boss</span>';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="mob-emoji">${m.e}</td><td class="mob-name">${m.n}</td><td>${catLabel}</td><td class="gain">${m.min} 🪙</td><td class="gain">${m.max} 🪙</td>`;
+    tbody.appendChild(tr);
+  });
+}
+renderRows('all');
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderRows(btn.dataset.filter);
+  });
+});
+</script>
+</body>
+</html>
